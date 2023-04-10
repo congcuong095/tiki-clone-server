@@ -1,35 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { Product } from 'src/Models/Entitys/Product';
+import { BaseEntity } from 'src/Models/Entitys/BaseEntity';
 
-@Injectable()
-export class ProductService {
-    constructor(@InjectModel('Product') private productModel: Model<Product>) {}
+export class BaseService<Entity extends BaseEntity> {
+    constructor(protected repo: Model<Entity>) {}
 
     async create(data: any): Promise<any> {
-        const createData = new this.productModel(data);
+        const createData = new this.repo(data);
         return createData.save();
     }
     async get(id: any): Promise<any> {
-        const save = await this.productModel.findById(id);
+        const save = await this.repo.findById(id);
         if (!save) {
             throw new NotFoundException();
         }
         return save;
     }
     async put(id: any, data: any): Promise<any> {
-        const save = await this.productModel.findOneAndReplace({ _id: id }, data, { new: true });
+        const save = await this.repo.findOneAndUpdate({ _id: id }, data, { new: true });
         if (!save) {
             throw new NotFoundException();
         }
         return save;
     }
     async delete(id: any): Promise<String> {
-        const save = await this.productModel.findOneAndDelete(id);
+        const save = await this.repo.findOneAndDelete(id);
         if (!save) {
             throw new NotFoundException();
         }
-        return 'item has been removed';
+        return 'Item has been removed!';
     }
 }

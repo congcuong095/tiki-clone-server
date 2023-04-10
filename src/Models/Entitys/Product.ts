@@ -8,7 +8,7 @@ import { Seller } from './Selection/Seller';
 
 export type ProductDocument = HydratedDocument<Product>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Product extends BaseEntity {
     @Prop()
     name: String;

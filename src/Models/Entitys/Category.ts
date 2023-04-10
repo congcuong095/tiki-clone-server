@@ -6,14 +6,18 @@ import { BaseEntity } from './BaseEntity';
 
 export type CategoryDocument = HydratedDocument<Category>;
 
-@Schema()
+@Schema({
+    toJSON: {
+        getters: true,
+    },
+})
 export class Category extends BaseEntity {
     @Prop()
     query_value: Number;
     @Prop()
     display_value: String;
     @Prop({
-        default: function () {
+        get: function () {
             return this.product.length;
         },
     })

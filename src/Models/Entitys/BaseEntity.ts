@@ -7,12 +7,6 @@ export type BaseEntityDocument = HydratedDocument<BaseEntity>;
 export class BaseEntity {
     @Prop()
     id: String;
-    @Prop()
-    createdAt: Date;
-    @Prop()
-    updatedAt: Date;
-    @Prop()
-    deletedAt: Date;
 }
 
 export const BaseEntitySchema = SchemaFactory.createForClass(BaseEntity);
