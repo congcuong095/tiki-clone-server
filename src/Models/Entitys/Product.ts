@@ -1,12 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Category } from './Category';
+import { Color } from './Selection/Color';
+import { Brand } from './Selection/Brand';
+import { BaseEntity } from './BaseEntity';
+import { Seller } from './Selection/Seller';
 
 export type ProductDocument = HydratedDocument<Product>;
 
 @Schema()
-export class Product {
+export class Product extends BaseEntity {
     @Prop()
     name: String;
+    @Prop()
     url_key: String;
     @Prop()
     url_path: String;
@@ -16,22 +22,25 @@ export class Product {
     short_description: String;
     @Prop()
     price: Number;
-    @Prop([
-        {
-            code: String,
-            icon: String,
-            type: String,
-            text: String,
-        },
-    ])
-    badges_new: [
-        {
-            code: String;
-            icon: String;
-            type: String;
-            text: String;
-        },
-    ];
+    @Prop({
+        type: [
+            {
+                code: { type: String },
+                icon: { type: String },
+                type: { type: String },
+                placement: { type: String },
+                text: { type: String },
+            },
+        ],
+        _id: false,
+    })
+    badges_new: {
+        code: String;
+        icon: String;
+        type: String;
+        placement: String;
+        text: String;
+    }[];
     @Prop()
     discount: Number;
     @Prop()
@@ -42,20 +51,22 @@ export class Product {
     review_count: Number;
     @Prop()
     thumbnail_url: String;
-    @Prop()
-    thumbnail_width: Number;
-    @Prop()
-    thumbnail_height: Number;
-    @Prop({ type: { text: String, value: String } })
-    quantity_sold: { text: String; value: String };
+    @Prop({ type: { text: String, value: String }, _id: false })
+    quantity_sold: { text: String; value: Number };
     @Prop()
     original_price: Number;
     @Prop()
     shippable: Boolean;
     @Prop()
     advertisement: Boolean;
-    @Prop()
-    seller_id: Number;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }] })
+    category: Category[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Color' }] })
+    color: Color[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Brand' }] })
+    brand: Brand[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
+    seller: Seller[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
