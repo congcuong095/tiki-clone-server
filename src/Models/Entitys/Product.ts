@@ -7,7 +7,7 @@ import { BaseEntity } from './BaseEntity';
 import { Seller } from './Selection/Seller';
 
 export type ProductDocument = HydratedDocument<Product>;
-
+process.env.TZ = 'Asia/Ho_Chi_Minh';
 @Schema({ timestamps: true })
 export class Product extends BaseEntity {
     @Prop()

@@ -4,7 +4,7 @@ import { BaseSelection } from './BaseSelection';
 
 export type ColorDocument = HydratedDocument<Color>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Color extends BaseSelection {}
 
 export const ColorSchema = SchemaFactory.createForClass(Color);

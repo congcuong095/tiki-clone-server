@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { FilterSelection } from '../FilterSelection';
 import { BaseEntity } from '../BaseEntity';
 
 export type BaseSelectionDocument = HydratedDocument<BaseSelection>;
@@ -15,8 +14,6 @@ export class BaseSelection extends BaseEntity {
     multi_select: Boolean;
     @Prop()
     collapsed: Number;
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FilterSelection' })
-    filterSelection: FilterSelection;
 }
 
 export const BaseSelectionSchema = SchemaFactory.createForClass(BaseSelection);

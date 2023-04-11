@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Product } from './Product';
-import { FilterSelection } from './FilterSelection';
 import { BaseEntity } from './BaseEntity';
+import { Color } from './Selection/Color';
+import { Brand } from './Selection/Brand';
+import { Seller } from './Selection/Seller';
 
 export type CategoryDocument = HydratedDocument<Category>;
 
@@ -10,6 +12,7 @@ export type CategoryDocument = HydratedDocument<Category>;
     toJSON: {
         getters: true,
     },
+    timestamps: true,
 })
 export class Category extends BaseEntity {
     @Prop()
@@ -32,8 +35,12 @@ export class Category extends BaseEntity {
     parentCategory: Category;
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
     product: Product[];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FilterSelection' }] })
-    filterSelection: FilterSelection[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Color' }] })
+    color: Color[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Brand' }] })
+    brand: Brand[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
+    seller: Seller[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

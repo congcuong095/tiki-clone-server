@@ -6,7 +6,7 @@ export type BaseEntityDocument = HydratedDocument<BaseEntity>;
 @Schema()
 export class BaseEntity {
     @Prop()
-    id: String;
+    id: Number;
 }
 
 export const BaseEntitySchema = SchemaFactory.createForClass(BaseEntity);

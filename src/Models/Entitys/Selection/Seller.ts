@@ -4,7 +4,7 @@ import { BaseSelection } from './BaseSelection';
 
 export type SellerDocument = HydratedDocument<Seller>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Seller extends BaseSelection {}
 
 export const SellerSchema = SchemaFactory.createForClass(Seller);
