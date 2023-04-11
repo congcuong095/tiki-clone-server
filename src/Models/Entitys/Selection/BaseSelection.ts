@@ -7,13 +7,9 @@ export type BaseSelectionDocument = HydratedDocument<BaseSelection>;
 @Schema()
 export class BaseSelection extends BaseEntity {
     @Prop()
-    query_name: String;
+    display_value: String;
     @Prop()
-    display_name: String;
-    @Prop()
-    multi_select: Boolean;
-    @Prop()
-    collapsed: Number;
+    query_value: String;
 }
 
 export const BaseSelectionSchema = SchemaFactory.createForClass(BaseSelection);

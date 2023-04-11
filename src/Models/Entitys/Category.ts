@@ -9,9 +9,6 @@ import { Seller } from './Selection/Seller';
 export type CategoryDocument = HydratedDocument<Category>;
 
 @Schema({
-    toJSON: {
-        getters: true,
-    },
     timestamps: true,
 })
 export class Category extends BaseEntity {
@@ -19,12 +16,6 @@ export class Category extends BaseEntity {
     query_value: Number;
     @Prop()
     display_value: String;
-    @Prop({
-        get: function () {
-            return this.product.length;
-        },
-    })
-    count: Number;
     @Prop()
     url_key: String;
     @Prop()
@@ -40,7 +31,7 @@ export class Category extends BaseEntity {
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Brand' }] })
     brand: Brand[];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
-    seller: Seller[];
+    sellerBy: Seller[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

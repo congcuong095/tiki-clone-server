@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { Category } from './Category';
 import { Color } from './Selection/Color';
 import { Brand } from './Selection/Brand';
@@ -66,7 +66,7 @@ export class Product extends BaseEntity {
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Brand' }] })
     brand: Brand[];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
-    seller: Seller[];
+    sellerBy: Seller[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
