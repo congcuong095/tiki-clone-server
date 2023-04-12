@@ -9,19 +9,4 @@ export class BrandService extends BaseService<Brand> {
     constructor(@InjectModel('Brand') BrandModel: Model<Brand>) {
         super(BrandModel);
     }
-    async getAllData(): Promise<any> {
-        const save = await this.repository.find();
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
-
-    async updateData(id, data): Promise<any> {
-        const save = await this.repository.findByIdAndUpdate(id, data);
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
 }

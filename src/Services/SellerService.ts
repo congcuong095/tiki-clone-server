@@ -9,19 +9,4 @@ export class SellerService extends BaseService<Seller> {
     constructor(@InjectModel('Seller') SellerModel: Model<Seller>) {
         super(SellerModel);
     }
-    async getAllData(): Promise<any> {
-        const save = await this.repository.find();
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
-
-    async updateData(id, data): Promise<any> {
-        const save = await this.repository.findByIdAndUpdate(id, data);
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
 }

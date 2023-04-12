@@ -6,18 +6,18 @@ export class BaseController<Service extends BaseService<Entity>, Entity extends 
     constructor(protected service: Service) {}
     @Post()
     create(@Body() data: Entity): Promise<Entity> {
-        return this.service.create(data);
+        return this.service.createOne(data);
     }
     @Get(':id')
     get(@Param('id') id: any): Promise<Entity> {
-        return this.service.get(id);
+        return this.service.getOneById(id);
     }
     @Put(':id')
     put(@Param('id') id: any, @Body() data: Entity): Promise<Entity> {
-        return this.service.put(id, data);
+        return this.service.putOne(id, data);
     }
     @Delete(':id')
     delete(@Param('id') id: any): Promise<String> {
-        return this.service.delete(id);
+        return this.service.deleteOneById(id);
     }
 }

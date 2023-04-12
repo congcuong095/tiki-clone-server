@@ -31,10 +31,10 @@ export class ProductService extends BaseService<Product> {
             const createData = new this.repository(data);
             let result;
             await createData.save().then((res) => (result = res));
-            // Update vao category
+            // Update  category
             result.category.forEach(async (item) => {
                 let category;
-                await this.categoryService.get(item).then((res) => (category = res));
+                await this.categoryService.getOneById(item).then((res) => (category = res));
                 if (!category.product.includes(result._id)) {
                     category.product.push(result._id);
                 }
@@ -59,12 +59,12 @@ export class ProductService extends BaseService<Product> {
                         category.crossBorder.push(x);
                     }
                 });
-                this.categoryService.updateData(item, category);
+                this.categoryService.updateOneData(item, category);
             });
-            //Update vao color
+            //Update  color
             result.color.forEach(async (item) => {
                 let color;
-                await this.colorService.get(item).then((res) => (color = res));
+                await this.colorService.getOneById(item).then((res) => (color = res));
                 if (!color.product.includes(result._id)) {
                     color.product.push(result._id);
                 }
@@ -74,12 +74,12 @@ export class ProductService extends BaseService<Product> {
                         color.category.push(x);
                     }
                 });
-                this.colorService.updateData(item, { category: color });
+                this.colorService.updateOneData(item, { category: color });
             });
-            //Update vao brand
+            //Update  brand
             result.brand.forEach(async (item) => {
                 let brand;
-                await this.brandService.get(item).then((res) => (brand = res));
+                await this.brandService.getOneById(item).then((res) => (brand = res));
                 if (!brand.product.includes(result._id)) {
                     brand.product.push(result._id);
                 }
@@ -89,12 +89,12 @@ export class ProductService extends BaseService<Product> {
                         brand.category.push(x);
                     }
                 });
-                this.brandService.updateData(item, brand);
+                this.brandService.updateOneData(item, brand);
             });
-            //Update vao Seller
+            //Update  Seller
             result.sellerBy.forEach(async (item) => {
                 let seller;
-                await this.sellerService.get(item).then((res) => (seller = res));
+                await this.sellerService.getOneById(item).then((res) => (seller = res));
                 if (!seller.product.includes(result._id)) {
                     seller.product.push(result._id);
                 }
@@ -104,12 +104,12 @@ export class ProductService extends BaseService<Product> {
                         seller.category.push(x);
                     }
                 });
-                this.sellerService.updateData(item, seller);
+                this.sellerService.updateOneData(item, seller);
             });
-            //Update vao crossBorder
+            //Update  crossBorder
             result.crossBorder.forEach(async (item) => {
                 let crossBorder;
-                await this.crossBorderService.get(item).then((res) => (crossBorder = res));
+                await this.crossBorderService.getOneById(item).then((res) => (crossBorder = res));
                 if (!crossBorder.product.includes(result._id)) {
                     crossBorder.product.push(result._id);
                 }
@@ -119,7 +119,7 @@ export class ProductService extends BaseService<Product> {
                         crossBorder.category.push(x);
                     }
                 });
-                this.crossBorderService.updateData(item, crossBorder);
+                this.crossBorderService.updateOneData(item, crossBorder);
             });
 
             await session.commitTransaction();

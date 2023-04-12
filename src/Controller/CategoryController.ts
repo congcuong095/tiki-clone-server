@@ -13,8 +13,8 @@ export class CategoryController extends BaseController<CategoryService, Category
     //     return this.service.updateData();
     // }
 
-    // @Delete('/deletedata')
-    // deleteData(): Promise<any> {
-    //     return this.service.deleteData();
-    // }
+    @Delete('/deletedata')
+    deleteData(): Promise<any> {
+        return this.service.deleteData();
+    }
 }

@@ -15,22 +15,6 @@ export class CategoryService extends BaseService<Category> {
         super(CategoryModel);
     }
 
-    async getAllData(): Promise<any> {
-        const save = await this.repository.find();
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
-
-    async updateData(id, data): Promise<any> {
-        const save = await this.repository.findByIdAndUpdate(id, data);
-        if (!save) {
-            throw new NotFoundException();
-        }
-        return save;
-    }
-
     async deleteData(): Promise<any> {
         const save = await this.repository.deleteMany({ level_category: 3 });
         if (!save) {
