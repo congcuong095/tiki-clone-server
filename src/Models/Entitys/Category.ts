@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
 import { Product } from './Product';
 import { BaseEntity } from './BaseEntity';
 import { Color } from './Selection/Color';
 import { Brand } from './Selection/Brand';
 import { Seller } from './Selection/Seller';
+import { CrossBorder } from './Selection/CrossBorder';
 
 export type CategoryDocument = HydratedDocument<Category>;
 
@@ -32,6 +33,8 @@ export class Category extends BaseEntity {
     brand: Brand[];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
     sellerBy: Seller[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CrossBorder' }] })
+    crossBorder: CrossBorder[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

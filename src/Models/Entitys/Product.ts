@@ -5,9 +5,9 @@ import { Color } from './Selection/Color';
 import { Brand } from './Selection/Brand';
 import { BaseEntity } from './BaseEntity';
 import { Seller } from './Selection/Seller';
+import { CrossBorder } from './Selection/CrossBorder';
 
 export type ProductDocument = HydratedDocument<Product>;
-process.env.TZ = 'Asia/Ho_Chi_Minh';
 @Schema({ timestamps: true })
 export class Product extends BaseEntity {
     @Prop()
@@ -67,6 +67,8 @@ export class Product extends BaseEntity {
     brand: Brand[];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }] })
     sellerBy: Seller[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'CrossBorder' }] })
+    crossBorder: CrossBorder[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

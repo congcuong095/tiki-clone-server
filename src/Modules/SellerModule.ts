@@ -15,5 +15,6 @@ import { Seller, SellerSchema } from 'src/Models/Entitys/Selection/Seller';
     ],
     controllers: [SellerController],
     providers: [SellerService],
+    exports: [SellerService],
 })
 export class SellerModule {}

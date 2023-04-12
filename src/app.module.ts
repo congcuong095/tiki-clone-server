@@ -5,6 +5,7 @@ import { CategoryModule } from './Modules/CategoryModule';
 import { ColorModule } from './Modules/ColorModule';
 import { BrandModule } from './Modules/BrandModule';
 import { SellerModule } from './Modules/SellerModule';
+import { CrossBorderModule } from './Modules/CrossBorderModule';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { SellerModule } from './Modules/SellerModule';
         ColorModule,
         BrandModule,
         SellerModule,
+        CrossBorderModule,
     ],
 })
 export class AppModule {}

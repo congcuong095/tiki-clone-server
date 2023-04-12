@@ -15,5 +15,6 @@ import { Color, ColorSchema } from 'src/Models/Entitys/Selection/Color';
     ],
     controllers: [ColorController],
     providers: [ColorService],
+    exports: [ColorService],
 })
 export class ColorModule {}

@@ -8,4 +8,8 @@ export class ProductController extends BaseController<ProductService, Product> {
     constructor(productService: ProductService) {
         super(productService);
     }
+    @Post('/post')
+    addProduct(@Body() data: Product): Promise<Product> {
+        return this.service.addProduct(data);
+    }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Seller } from 'src/Models/Entitys/Selection/Seller';
@@ -9,11 +9,19 @@ export class SellerService extends BaseService<Seller> {
     constructor(@InjectModel('Seller') SellerModel: Model<Seller>) {
         super(SellerModel);
     }
-    async postData(data: any): Promise<any> {
-        data.forEach((item: any) => {
-            const createData = new this.repository(item);
-            createData.save();
-        });
-        return 'Done';
+    async getAllData(): Promise<any> {
+        const save = await this.repository.find();
+        if (!save) {
+            throw new NotFoundException();
+        }
+        return save;
+    }
+
+    async updateData(id, data): Promise<any> {
+        const save = await this.repository.findByIdAndUpdate(id, data);
+        if (!save) {
+            throw new NotFoundException();
+        }
+        return save;
     }
 }

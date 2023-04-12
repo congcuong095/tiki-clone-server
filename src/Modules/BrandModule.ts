@@ -15,5 +15,6 @@ import { Brand, BrandSchema } from 'src/Models/Entitys/Selection/Brand';
     ],
     controllers: [BrandController],
     providers: [BrandService],
+    exports: [BrandService],
 })
 export class BrandModule {}
