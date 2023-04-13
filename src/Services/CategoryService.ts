@@ -79,6 +79,7 @@ export class CategoryService extends BaseService<Category> {
                     .populate({ path: 'crossBorder' })
                     .populate({
                         path: 'product',
+                        options: { sort: { name: 1 } },
                         select: ' -__v -createdAt -updatedAt',
                     });
         }

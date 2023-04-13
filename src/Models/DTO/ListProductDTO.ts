@@ -6,6 +6,6 @@ import { SortDTO } from './SortDTO';
 export interface ListProductDTO {
     data: Product[];
     paging: PagingDTO;
-    filter: FilterDTO[];
+    filters: FilterDTO[];
     sort_options: SortDTO[];
 }

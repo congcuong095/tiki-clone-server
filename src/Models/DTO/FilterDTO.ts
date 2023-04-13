@@ -12,6 +12,7 @@ export interface FilterDTO {
         query_value?: string;
         url_key?: string;
         url_path?: string;
+        selected?: boolean;
     }[];
 }
 
