@@ -11,8 +11,11 @@ export type CategoryDocument = HydratedDocument<Category>;
 
 @Schema({
     timestamps: true,
+    _id: false,
 })
 export class Category extends BaseEntity {
+    @Prop({ type: mongoose.Types.ObjectId })
+    _id: ObjectId;
     @Prop()
     query_value: Number;
     @Prop()

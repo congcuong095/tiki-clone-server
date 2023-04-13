@@ -8,13 +8,4 @@ export class CategoryController extends BaseController<CategoryService, Category
     constructor(CategoryService: CategoryService) {
         super(CategoryService);
     }
-    // @Patch('/updatedata')
-    // updateData(): Promise<any> {
-    //     return this.service.updateData();
-    // }
-
-    @Delete('/deletedata')
-    deleteData(): Promise<any> {
-        return this.service.deleteData();
-    }
 }

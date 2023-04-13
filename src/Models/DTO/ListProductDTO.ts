@@ -1,8 +1,11 @@
-import { Prop, Schema } from "@nestjs/mongoose";
-import { Product } from "../Entitys/Product";
+import { Product } from '../Entitys/Product';
+import { FilterDTO } from './FilterDTO';
+import { PagingDTO } from './PagingDTO';
+import { SortDTO } from './SortDTO';
 
-@Schema()
-export class ListProductDTO {
-    @Prop()
-    data: Product[]
+export interface ListProductDTO {
+    data: Product[];
+    paging: PagingDTO;
+    filter: FilterDTO[];
+    sort_options: SortDTO[];
 }

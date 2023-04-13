@@ -8,6 +8,22 @@ import { ColorService } from './ColorService';
 import { BrandService } from './BrandService';
 import { SellerService } from './SellerService';
 import { CrossBorderService } from './CrossBorderService';
+import { ListProductDTO } from 'src/Models/DTO/ListProductDTO';
+import { QueryParam } from 'src/Models/DTO/QueryParam';
+import { PagingDTO } from 'src/Models/DTO/PagingDTO';
+import {
+    FilterDTO,
+    CategoryFilter,
+    NowFilter,
+    AstraFilter,
+    InstallmentFilter,
+    RatingFilter,
+    PriceFilter,
+    SelectionFilter,
+    CrossBorderFilter,
+} from 'src/Models/DTO/FilterDTO';
+import { SortDTO } from 'src/Models/DTO/SortDTO';
+import { Category } from 'src/Models/Entitys/Category';
 
 @Injectable()
 export class ProductService extends BaseService<Product> {
@@ -132,11 +148,101 @@ export class ProductService extends BaseService<Product> {
         }
     }
 
-    async getAllData(): Promise<any> {
-        const save = await this.repository.find();
-        if (!save) {
-            throw new NotFoundException();
+    async getListProduct(query: QueryParam): Promise<ListProductDTO> {
+        let {
+            limit,
+            category,
+            page,
+            urlKey,
+            support_p2h_delivery,
+            seller_asa_cashback,
+            support_installment,
+            sort,
+            option_color,
+            price,
+            rating,
+            brand,
+            seller,
+            is_cross_border,
+        } = query;
+        //Convert query
+        let convertPrice = price && price.split(',');
+        let resultData: ListProductDTO = {
+            data: [],
+            paging: undefined,
+            filter: [],
+            sort_options: [],
+        };
+        //Init variable
+        let listProduct: Product[] = [];
+        let categoryRoot: Category = undefined;
+        let paging: PagingDTO = {};
+        let listFilter: FilterDTO[] = [];
+        let listSort: SortDTO[] = SortDTO;
+        const newCategoryFilter = CategoryFilter;
+        const newNowFilter = NowFilter;
+        const newAstraFilter = AstraFilter;
+        const newInstallmentFilter = InstallmentFilter;
+        const newRatingFilter = RatingFilter;
+        const newPriceFilter = PriceFilter;
+        const newSelectionFilter = SelectionFilter;
+        const newCrossBorderFilter = CrossBorderFilter;
+        //Get list Product and sort
+        if (category && urlKey) {
+            await this.categoryService
+                .findOnePopulateProduct({ category, urlKey, sort })
+                .then((res) => {
+                    categoryRoot = res;
+                    listProduct = res.product;
+                })
+                .catch((err) => console.log(err));
         }
-        return save;
+        //Update sort option for respone
+        if (sort && sort != 'default') {
+            listSort.forEach((item) => {
+                item.selected = item.query_value == sort;
+            });
+        }
+        //Update category
+        let listCategory;
+        await this.categoryService
+            .getCategoryToFilter({
+                parentCategory: categoryRoot._id,
+                level_category: Number(categoryRoot.level_category) + 1,
+            })
+            .then((res) => (listCategory = res));
+        if (listCategory.length > 0) {
+            newCategoryFilter.values = listCategory;
+        }
+        //Update Filter
+        listFilter.push(newCategoryFilter);
+        //Assign paging
+        if (limit) {
+            paging.per_page = limit;
+        }
+        if (page) {
+            paging.current_page = page;
+        }
+
+        paging.total = listProduct.length;
+        paging.last_page =
+            listProduct.length % limit === 0
+                ? Math.floor(listProduct.length / limit)
+                : Math.floor(listProduct.length / limit) + 1;
+        //Hide color,brand,seller,crossBorder,category
+        listProduct.forEach((item) => {
+            item.color = null;
+            item.brand = null;
+            item.sellerBy = null;
+            item.crossBorder = null;
+            item.category = null;
+        });
+        //Assign result
+        resultData.data = listProduct;
+        resultData.filter = listFilter;
+        resultData.paging = paging;
+        resultData.sort_options = listSort;
+
+        return resultData;
     }
 }
