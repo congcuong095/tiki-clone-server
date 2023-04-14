@@ -8,6 +8,8 @@ export type BaseSelectionDocument = HydratedDocument<BaseSelection>;
 
 @Schema()
 export class BaseSelection extends BaseEntity {
+    @Prop({ type: mongoose.Types.ObjectId })
+    _id: ObjectId;
     @Prop()
     display_value: String;
     @Prop()

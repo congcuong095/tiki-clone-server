@@ -166,7 +166,6 @@ export class ProductService extends BaseService<Product> {
             is_cross_border,
         } = query;
         //Convert query
-        let convertPrice = price && price.split(',');
         let resultData: ListProductDTO = {
             data: [],
             paging: undefined,
@@ -207,7 +206,7 @@ export class ProductService extends BaseService<Product> {
         }
         //---------------------------------------------Filters Product-----------------------------------------------
         //Now
-        if (support_p2h_delivery == 1) {
+        if (Number(support_p2h_delivery) == 1) {
             listProduct = listProduct.filter((item) => {
                 return item.badges_new.some((x) => {
                     return x.code == 'tikinow';
@@ -218,7 +217,7 @@ export class ProductService extends BaseService<Product> {
             newNowFilter.values[0] && (newNowFilter.values[0].selected = false);
         }
         //Astra
-        if (seller_asa_cashback == 1) {
+        if (Number(seller_asa_cashback) == 1) {
             listProduct = listProduct.filter((item) => {
                 return item.badges_new.some((x) => {
                     return x.code == 'asa_reward_badge';
@@ -229,7 +228,7 @@ export class ProductService extends BaseService<Product> {
             newAstraFilter.values[0] && (newAstraFilter.values[0].selected = false);
         }
         //Installment
-        if (support_installment == 1) {
+        if (Number(support_installment) == 1) {
             listProduct = listProduct.filter((item) => {
                 return item.badges_new.some((x) => {
                     return x.code == 'installment';
@@ -239,20 +238,98 @@ export class ProductService extends BaseService<Product> {
         } else {
             newInstallmentFilter.values[0] && (newInstallmentFilter.values[0].selected = false);
         }
-        //Color
-        //  if (option_color || option_color.length>0) {
+        //Rating
+        if (!isNaN(Number(rating))) {
+            listProduct = listProduct.filter((item) => {
+                return Number(item.rating_average) >= Number(rating);
+            });
+            let indexRating = newRatingFilter.values.findIndex((item) => Number(item.query_value) == Number(rating));
+            newRatingFilter.values.unshift(newRatingFilter.values.splice(indexRating, 1)[0]);
+        }
+        //Price
+        if (price) {
+            let convertPrice = price.split(',');
+            let priceFrom = Number(convertPrice[0]);
+            let priceTo = Number(convertPrice[1]);
+            listProduct = listProduct.filter((item) => {
+                return Number(item.price) >= priceFrom && Number(item.price) <= priceTo;
+            });
+        }
 
-        //      listProduct = listProduct.filter((item) => {
-        //          return item.badges_new.some((x) => {
-        //              return x.code == 'installment';
-        //          });
-        //      });
-        //      newInstallmentFilter.values[0].selected = true;
-        //  } else {
-        //      newInstallmentFilter.values[0] && (newInstallmentFilter.values[0].selected = false);
-        //  }
-        //---------------------------------------------Show Filters-----------------------------------------------
-        //Update category of Filter
+        //Brand
+        if (brand) {
+            let convertBrand = brand.split(',');
+            let arrIdBrand = [];
+            for (let item of convertBrand) {
+                await this.brandService
+                    .findOne({ query_value: item })
+                    .then((res) => arrIdBrand.push(res._id.toString()));
+            }
+
+            listProduct = listProduct.filter((item) => {
+                let check = false;
+                item.brand.forEach((x) => {
+                    check = arrIdBrand.includes(x.toString());
+                });
+                return check;
+            });
+        }
+        //Color
+        if (option_color) {
+            let convertColor = option_color.split(',');
+            let arrIdColor = [];
+            for (let item of convertColor) {
+                await this.colorService
+                    .findOne({ query_value: item })
+                    .then((res) => arrIdColor.push(res._id.toString()));
+            }
+
+            listProduct = listProduct.filter((item) => {
+                let check = false;
+                item.color.forEach((x) => {
+                    check = arrIdColor.includes(x.toString());
+                });
+                return check;
+            });
+        }
+        //Seller
+        if (seller) {
+            let convertSeller = seller.split(',');
+            let arrIdSeller = [];
+            for (let item of convertSeller) {
+                await this.sellerService
+                    .findOne({ query_value: item })
+                    .then((res) => arrIdSeller.push(res._id.toString()));
+            }
+
+            listProduct = listProduct.filter((item) => {
+                let check = false;
+                item.sellerBy.forEach((x) => {
+                    check = arrIdSeller.includes(x.toString());
+                });
+                return check;
+            });
+        }
+        //Cross border
+        if (!isNaN(Number(is_cross_border))) {
+            let idCrossBorder;
+            await this.crossBorderService
+                .findOne({ query_value: Number(is_cross_border) })
+                .then((res) => (idCrossBorder = res._id.toString()));
+
+            listProduct = listProduct.filter((item) => {
+                return item.crossBorder.some((x) => {
+                    return x.toString() == idCrossBorder;
+                });
+            });
+
+            let indexCrossBorder = newCrossBorderFilter.values.findIndex(
+                (item) => Number(item.query_value) == Number(is_cross_border),
+            );
+            newCrossBorderFilter.values.unshift(newCrossBorderFilter.values.splice(indexCrossBorder, 1)[0]);
+        }
+        //---------------------------------------------Show Sidebar-----------------------------------------------
+        //Update category of Sidebar
         let listCategory;
         await this.categoryService
             .getCategoryToFilter({
@@ -263,18 +340,13 @@ export class ProductService extends BaseService<Product> {
         if (listCategory.length > 0) {
             newCategoryFilter.values = listCategory;
 
-            listFilter.push(newCategoryFilter);
+            listFilter.unshift(newCategoryFilter);
         }
-        //Update Now, Astra, Installment of Filter
+        //Update Now, Astra, Installment of Sidebar
         let hasNow,
             hasAstra,
             hasInstallment = false;
         listProduct.forEach((item) => {
-            item.color = null;
-            item.brand = null;
-            item.sellerBy = null;
-            item.crossBorder = null;
-            item.category = null;
             item.badges_new.forEach((x) => {
                 switch (x.code) {
                     case 'tikinow':
@@ -290,24 +362,37 @@ export class ProductService extends BaseService<Product> {
             });
         });
         if (hasNow) {
-            newNowFilter.values.push({ display_value: 'Có', query_value: '1', selected: false });
+            newNowFilter.values = [
+                Number(support_p2h_delivery) == 1
+                    ? { display_value: 'Có', query_value: '1', selected: true }
+                    : { display_value: 'Có', query_value: '1', selected: false },
+            ];
             listFilter.push(newNowFilter);
         }
         if (hasAstra) {
-            newAstraFilter.values.push({ display_value: 'Có', query_value: '1', selected: false });
+            newAstraFilter.values = [
+                Number(seller_asa_cashback) == 1
+                    ? { display_value: 'Có', query_value: '1', selected: true }
+                    : { display_value: 'Có', query_value: '1', selected: false },
+            ];
             listFilter.push(newAstraFilter);
         }
         if (hasInstallment) {
-            newInstallmentFilter.values.push({ display_value: 'Có', query_value: '1', selected: false });
+            newInstallmentFilter.values = [
+                Number(support_installment) == 1
+                    ? { display_value: 'Có', query_value: '1', selected: true }
+                    : { display_value: 'Có', query_value: '1', selected: false },
+            ];
             listFilter.push(newInstallmentFilter);
         }
-        //Update rating Filter
+        //Update rating of Sidebar
         listFilter.push(newRatingFilter);
-        //Update price Filter
-        if (listProduct.length >= 3) {
-            let maxPrice = Math.max(...listProduct.map((x) => Number(x.price)));
+        //Update price of Sidebar
+        if (categoryRoot.product.length >= 3) {
+            let maxPrice = Math.max(...categoryRoot.product.map((x) => Number(x.price)));
             let fromPrice = (Math.floor(maxPrice / 3 / 1000) * 1000).toString();
             let toPrice = (Math.floor(((maxPrice / 3) * 2) / 1000) * 1000).toString();
+
             newPriceFilter.values = [
                 {
                     query_value: '0,' + fromPrice,
@@ -322,68 +407,111 @@ export class ProductService extends BaseService<Product> {
                     display_value: `Trên ${fromPrice}`,
                 },
             ];
+            newPriceFilter.values.forEach((item) => {
+                if (item.query_value == price) {
+                    item.selected = true;
+                } else {
+                    item.selected = false;
+                }
+            });
             listFilter.push(newPriceFilter);
         }
-        //Update brand Filter
+        //Update brand of Sidebar
         if (categoryRoot.brand.length > 0) {
             let newBrandFilter = { ...newSelectionFilter };
             newBrandFilter.values = [];
             newBrandFilter.display_name = 'Thương hiệu';
             newBrandFilter.query_name = 'brand';
             categoryRoot.brand.forEach((item) => {
-                newBrandFilter.values.push({
-                    display_value: String(item.display_value),
-                    query_value: String(item.query_value),
-                });
+                newBrandFilter.values.push(
+                    brand && brand.includes(String(item.query_value))
+                        ? {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: true,
+                          }
+                        : {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: false,
+                          },
+                );
             });
             listFilter.push(newBrandFilter);
         }
-        //Update color filter
+        //Update color of Sidebar
         if (categoryRoot.color.length > 0) {
             let newColorFilter = { ...newSelectionFilter };
             newColorFilter.values = [];
             newColorFilter.display_name = 'Màu sắc';
             newColorFilter.query_name = 'option_color';
             categoryRoot.color.forEach((item) => {
-                newColorFilter.values.push({
-                    display_value: String(item.display_value),
-                    query_value: String(item.query_value),
-                });
+                newColorFilter.values.push(
+                    option_color && option_color.includes(String(item.query_value))
+                        ? {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: true,
+                          }
+                        : {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: false,
+                          },
+                );
             });
             listFilter.push(newColorFilter);
         }
-        //Update seller filter
+        //Update seller of Sidebar
         if (categoryRoot.sellerBy.length > 0) {
             let newSellerByFilter = { ...newSelectionFilter };
             newSellerByFilter.values = [];
             newSellerByFilter.display_name = 'Nhà cung cấp';
             newSellerByFilter.query_name = 'seller';
             categoryRoot.sellerBy.forEach((item) => {
-                newSellerByFilter.values.push({
-                    display_value: String(item.display_value),
-                    query_value: String(item.query_value),
-                });
+                newSellerByFilter.values.push(
+                    seller && seller.includes(String(item.query_value))
+                        ? {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: true,
+                          }
+                        : {
+                              display_value: String(item.display_value),
+                              query_value: String(item.query_value),
+                              selected: false,
+                          },
+                );
             });
             listFilter.push(newSellerByFilter);
         }
-        //Update seller filter
-        if (categoryRoot.crossBorder.length > 2) {
+        //Update cross border of Sidebar
+        if (categoryRoot.crossBorder.length >= 2) {
             listFilter.push(newCrossBorderFilter);
         }
 
+        //Hide infor
+        listProduct.forEach((item) => {
+            item.color = null;
+            item.brand = null;
+            item.sellerBy = null;
+            item.crossBorder = null;
+            item.category = null;
+        });
+
         //Assign paging
         if (limit) {
-            paging.per_page = limit;
+            paging.per_page = Number(limit);
         }
         if (page) {
-            paging.current_page = page;
+            paging.current_page = Number(page);
         }
 
         paging.total = listProduct.length;
         paging.last_page =
-            listProduct.length % limit === 0
-                ? Math.floor(listProduct.length / limit)
-                : Math.floor(listProduct.length / limit) + 1;
+            listProduct.length % Number(limit) === 0
+                ? Math.floor(listProduct.length / Number(limit))
+                : Math.floor(listProduct.length / Number(limit)) + 1;
 
         //Assign result
         resultData.data = listProduct;

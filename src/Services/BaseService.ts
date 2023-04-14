@@ -16,6 +16,13 @@ export class BaseService<Entity extends BaseEntity> {
         }
         return save;
     }
+    async findOne(value): Promise<any> {
+        const save = await this.repository.findOne(value);
+        if (!save) {
+            throw new NotFoundException();
+        }
+        return save;
+    }
 
     async putOne(id: any, data: any): Promise<any> {
         const save = await this.repository.findOneAndUpdate({ _id: id }, data, { new: true });

@@ -1,16 +1,16 @@
 export interface QueryParam {
-    limit?: number;
-    category?: number;
-    page?: number;
+    limit?: string;
+    category?: string;
+    page?: string;
     urlKey?: string;
     sort?: string;
-    support_p2h_delivery?: number;
-    seller_asa_cashback?: number;
-    support_installment?: number;
-    rating?: number;
+    support_p2h_delivery?: string;
+    seller_asa_cashback?: string;
+    support_installment?: string;
+    rating?: string;
     price?: string;
-    brand?: number;
+    brand?: string;
     option_color?: string;
-    seller?: number;
-    is_cross_border?: number;
+    seller?: string;
+    is_cross_border?: string;
 }
