@@ -514,7 +514,7 @@ export class ProductService extends BaseService<Product> {
                 : Math.floor(listProduct.length / Number(limit)) + 1;
 
         //Assign result
-        resultData.data = listProduct;
+        resultData.data = listProduct.slice(Number(limit) * (Number(page) - 1), Number(limit) * Number(page));
         resultData.filters = listFilter;
         resultData.paging = paging;
         resultData.sort_options = listSort;
